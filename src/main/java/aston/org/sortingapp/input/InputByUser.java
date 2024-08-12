@@ -67,27 +67,28 @@ public class InputByUser<T> extends EntityInput<T> {
     }
 
     private Animal animalEntry() {
-        Animal animal = new Animal();
-        readFromConsole("Введите вид животного", String.class, animal::setSpecies);
-        readFromConsole("Введите цвет глаз животного", String.class, animal::setEyeColor);
-        readFromConsole("Введите наличие шерсти", Boolean.class, animal::setFur);
-        return animal;
+
+        Animal.Builder animalBuilder = new Animal.Builder();
+        readFromConsole("Введите вид животного", String.class, animalBuilder::setSpecies);
+        readFromConsole("Введите цвет глаз животного", String.class, animalBuilder::setEyeColor);
+        readFromConsole("Введите наличие шерсти", Boolean.class, animalBuilder::setFur);
+        return animalBuilder.build();
     }
 
     private Barrel barrelEntry() {
-        Barrel barrel = new Barrel();
-        readFromConsole("Введите объем бочки", Double.class, barrel::setVolume);
-        readFromConsole("Введите хранимый материал", String.class, barrel::setStoredMaterial);
-        readFromConsole("Введите материал изготовления", String.class, barrel::setMaterial);
-        return barrel;
+        Barrel.Builder barrelBuilder = new Barrel.Builder();
+        readFromConsole("Введите объем бочки", Double.class, barrelBuilder::setVolume);
+        readFromConsole("Введите хранимый материал", String.class, barrelBuilder::setStoredMaterial);
+        readFromConsole("Введите материал изготовления", String.class, barrelBuilder::setMaterial);
+        return barrelBuilder.build();
     }
 
     private Human humanEntry() {
-        Human human = new Human();
-        readFromConsole("Введите пол", String.class, human::setGender);
-        readFromConsole("Введите возраст", Integer.class, human::setAge);
-        readFromConsole("Введите фамилию", String.class, human::setSurname);
-        return human;
+        Human.Builder humanBuilder = new Human.Builder();
+        readFromConsole("Введите пол", String.class, humanBuilder::setGender);
+        readFromConsole("Введите возраст", Integer.class, humanBuilder::setAge);
+        readFromConsole("Введите фамилию", String.class, humanBuilder::setSurname);
+        return humanBuilder.build();
     }
 
 }
