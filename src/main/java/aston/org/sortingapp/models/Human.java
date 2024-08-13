@@ -1,9 +1,12 @@
 package aston.org.sortingapp.models;
 
-public class Human implements Comparable<Human> {
+import java.io.Serializable;
+
+public class Human implements Comparable<Human>, Serializable {
     /*Имплементирует интерфейс Comparable или Comparator.
     Также должен реализовывать паттерн Builder
      */
+    private static final long serialVersionUID = 1L;
     private final String gender;
     private final int age;
     private final String surname;

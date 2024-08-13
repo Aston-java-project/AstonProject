@@ -1,9 +1,12 @@
 package aston.org.sortingapp.models;
 
-public class Barrel implements Comparable<Barrel> {
+import java.io.Serializable;
+
+public class Barrel implements Comparable<Barrel>, Serializable {
     /*Имплементирует интерфейс Comparable или Comparator.
     Также должен реализовывать паттерн Builder
      */
+    private static final long serialVersionUID = 1L;
     private final double volume;
     private final String storedMaterial;
     private final String material;
