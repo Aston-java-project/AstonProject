@@ -55,19 +55,7 @@ public class InputByUser<T> extends EntityInput<T> {
         }
     }
 
-    private T createInstance() {
-        if (entityType == Animal.class) {
-            return entityType.cast(animalEntry());
-        } else if (entityType == Barrel.class) {
-            return entityType.cast(barrelEntry());
-        } else if (entityType == Human.class) {
-            return entityType.cast(humanEntry());
-        }
-        return null;
-    }
-
-    private Animal animalEntry() {
-
+    protected Animal animalEntry() {
         Animal.Builder animalBuilder = new Animal.Builder();
         readFromConsole("Введите вид животного", String.class, animalBuilder::setSpecies);
         readFromConsole("Введите цвет глаз животного", String.class, animalBuilder::setEyeColor);
@@ -75,7 +63,7 @@ public class InputByUser<T> extends EntityInput<T> {
         return animalBuilder.build();
     }
 
-    private Barrel barrelEntry() {
+    protected Barrel barrelEntry() {
         Barrel.Builder barrelBuilder = new Barrel.Builder();
         readFromConsole("Введите объем бочки", Double.class, barrelBuilder::setVolume);
         readFromConsole("Введите хранимый материал", String.class, barrelBuilder::setStoredMaterial);
@@ -83,7 +71,7 @@ public class InputByUser<T> extends EntityInput<T> {
         return barrelBuilder.build();
     }
 
-    private Human humanEntry() {
+    protected Human humanEntry() {
         Human.Builder humanBuilder = new Human.Builder();
         readFromConsole("Введите пол", String.class, humanBuilder::setGender);
         readFromConsole("Введите возраст", Integer.class, humanBuilder::setAge);
