@@ -1,7 +1,8 @@
 package aston.org.sortingapp.input;
 
 import aston.org.sortingapp.models.*;
-import java.lang.reflect.Array;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 
 public class InputFromFile<T> extends EntityInput<T> {
 
@@ -9,26 +10,24 @@ public class InputFromFile<T> extends EntityInput<T> {
         super(entityType);
     }
 
+    @Override
     public void performInput() {
+        String fileName;
+        if (entityType == Animal.class) {
+            fileName = "Animal.data";
+        } else if (entityType == Barrel.class) {
+            fileName = "Barrel.data";
+        } else if (entityType == Human.class) {
+            fileName = "Human.data";
+        } else {
+            fileName = "Other.data";
+        }
 
-    }
-
-    protected Animal animalEntry() {
-        Animal.Builder animalBuilder = new Animal.Builder();
-
-        return animalBuilder.build();
-    }
-
-    protected Barrel barrelEntry() {
-        Barrel.Builder barrelBuilder = new Barrel.Builder();
-
-        return barrelBuilder.build();
-    }
-
-    protected Human humanEntry() {
-        Human.Builder humanBuilder = new Human.Builder();
-
-        return humanBuilder.build();
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+            array = (T[]) in.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

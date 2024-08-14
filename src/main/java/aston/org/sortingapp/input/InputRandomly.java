@@ -1,49 +1,41 @@
 package aston.org.sortingapp.input;
 
 import aston.org.sortingapp.models.*;
-import java.lang.reflect.Array;
 import java.util.function.Consumer;
 import java.util.Random;
 
 public class InputRandomly<T> extends EntityInput<T> {
 
-    private static String[] randomAnimalSpecies = {
+    private final static String[] randomAnimalSpecies = {
             "Wolf", "Bear", "Elephant", "Coyote", "Rabbit",
             "Kangaroo", "Penguin", "Horse", "Leopard", "Fox"
     };
-    private static String[] randomAnimalEyeColor = {
+    private final static String[] randomAnimalEyeColor = {
             "Blue", "Green", "Brown", "Amber", "Hazel",
             "Gray", "Yellow", "Red", "Orange", "Violet"
     };
-    private static String[] randomBarrelStoredMaterial = {
+    private final static String[] randomBarrelStoredMaterial = {
             "Water", "Oil", "Wine", "Beer", "Grain",
             "Salt", "Sugar", "Honey", "Vinegar", "Petrol"
     };
-    private static String[] randomBarrelMaterial = {
+    private final static String[] randomBarrelMaterial = {
             "Wood", "Steel", "Plastic", "Aluminum", "Iron",
             "Copper", "Fiberglass", "Ceramic", "Titanium"
     };
-    private static String[] randomHumanSurname = {
+    private final static String[] randomHumanSurname = {
             "Ashworth", "Raynott", "Jarsdel", "Southway", "Silsbury",
             "Ravensdale", "Boulstridge", "Clayworth", "Edeson", "Lowsley"
     };
 
+    private final Random random;
+
     public InputRandomly(Class<T> entityType) {
         super(entityType);
-    }
-
-    private Random random;
-
-    public void performInput() {
-        System.out.println("Введите длину массива");
-        int arrayLength = scan.nextInt();
         random = new Random();
-        array = (T[]) Array.newInstance(entityType, arrayLength);
-
-        for(int i=0; i<arrayLength; i++) {
-            array[i] = createInstance();
-        }
     }
+
+    private Double randomBarrelVolume() { return random.nextDouble(5, 200); };
+    private Integer randomHumanAge() { return random.nextInt(0, 120); };
 
     private <K,V> void assignRandomly(Class<K> type, V[] randomArray, Consumer<K> setter) {
         int randomIndex = (randomArray.length > 1) ? random.nextInt(randomArray.length) : 0;
@@ -51,31 +43,22 @@ public class InputRandomly<T> extends EntityInput<T> {
         setter.accept(value);
     }
 
-    protected Animal animalEntry() {
-        Animal.Builder animalBuilder = new Animal.Builder();
-        assignRandomly(String.class, randomAnimalSpecies, animalBuilder::setSpecies);
-        assignRandomly(String.class, randomAnimalEyeColor, animalBuilder::setEyeColor);
-        assignRandomly(Boolean.class, new Boolean[]{true, false}, animalBuilder::setFur);
-        return animalBuilder.build();
+    protected void animalInit(Animal.Builder builder) {
+        assignRandomly(String.class, randomAnimalSpecies, builder::setSpecies);
+        assignRandomly(String.class, randomAnimalEyeColor, builder::setEyeColor);
+        assignRandomly(Boolean.class, new Boolean[]{true,false}, builder::setFur);
     }
 
-    protected Barrel barrelEntry() {
-        Barrel.Builder barrelBuilder = new Barrel.Builder();
-        assignRandomly(Double.class, new Double[]{ randomBarrelVolume() } , barrelBuilder::setVolume);
-        assignRandomly(String.class, randomBarrelStoredMaterial,barrelBuilder::setStoredMaterial);
-        assignRandomly(String.class, randomBarrelMaterial, barrelBuilder::setMaterial);
-        return barrelBuilder.build();
+    protected void barrelInit(Barrel.Builder builder) {
+        assignRandomly(Double.class, new Double[]{randomBarrelVolume()}, builder::setVolume);
+        assignRandomly(String.class, randomBarrelStoredMaterial, builder::setStoredMaterial);
+        assignRandomly(String.class, randomBarrelMaterial, builder::setMaterial);
     }
 
-    protected Human humanEntry() {
-        Human.Builder humanBuilder = new Human.Builder();
-        assignRandomly(String.class, new String[]{"male", "female"}, humanBuilder::setGender);
-        assignRandomly(Integer.class, new Integer[]{ randomHumanAge() }, humanBuilder::setAge);
-        assignRandomly(String.class, randomHumanSurname,humanBuilder::setSurname);
-        return humanBuilder.build();
+    protected void humanInit(Human.Builder builder) {
+        assignRandomly(String.class, new String[]{"male","female"}, builder::setGender);
+        assignRandomly(Integer.class, new Integer[]{randomHumanAge()}, builder::setAge);
+        assignRandomly(String.class, randomHumanSurname, builder::setSurname);
     }
-
-    private Double randomBarrelVolume() { return random.nextDouble(5, 200); };
-    private Integer randomHumanAge() { return random.nextInt(0, 120); };
 
 }
