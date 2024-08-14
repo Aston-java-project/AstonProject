@@ -74,7 +74,7 @@ public class UIService {
 
     public static boolean saveToFile() {
         if (entityInput == null || entityInput.getArray().length < 1) {
-            System.out.println("Нет элементов для сохранения!");
+            System.out.println("Нет объектов для сохранения!");
             return false;
         }
         String fileName = switch (classOption) {
@@ -127,7 +127,7 @@ public class UIService {
             if (index < 0) {
                 System.out.println("Объект не найден");
             } else {
-                System.out.println("Индекс элемента: " + index);
+                System.out.println("Индекс объекта: " + index);
             }
         }
 
@@ -149,7 +149,7 @@ public class UIService {
             if (sortOption == 1) TimSort.sort(array);
             if (sortOption == 2) TimSortEven.sort(array);
         } else {
-            System.out.println("Нет элементов в массиве!");
+            System.out.println("Нет объектов в массиве!");
         }
         return true;
     }
