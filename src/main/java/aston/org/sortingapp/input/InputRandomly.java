@@ -34,7 +34,7 @@ public class InputRandomly<T> extends EntityInput<T> {
         random = new Random();
     }
 
-    private Double randomBarrelVolume() { return random.nextDouble(5, 200); };
+    private Double randomBarrelVolume() { return .0 + random.nextInt(5, 200); };
     private Integer randomHumanAge() { return random.nextInt(0, 120); };
 
     private <K,V> void assignRandomly(Class<K> type, V[] randomArray, Consumer<K> setter) {

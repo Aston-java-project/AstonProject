@@ -21,19 +21,19 @@ public abstract class EntityInput<T> {
     protected void barrelInit(Barrel.Builder builder) {}
     protected void humanInit(Human.Builder builder) {}
 
-    protected Animal animalEntry() {
+    public Animal createAnimal() {
         Animal.Builder animalBuilder = new Animal.Builder();
         animalInit(animalBuilder);
         return animalBuilder.build();
     }
 
-    protected Barrel barrelEntry() {
+    public Barrel createBarrel() {
         Barrel.Builder barrelBuilder = new Barrel.Builder();
         barrelInit(barrelBuilder);
         return barrelBuilder.build();
     }
 
-    protected Human humanEntry() {
+    public Human createHuman() {
         Human.Builder humanBuilder = new Human.Builder();
         humanInit(humanBuilder);
         return humanBuilder.build();
@@ -58,18 +58,22 @@ public abstract class EntityInput<T> {
 
     protected T createInstance() {
         if (entityType == Animal.class) {
-            return entityType.cast(animalEntry());
+            return entityType.cast(createAnimal());
         } else if (entityType == Barrel.class) {
-            return entityType.cast(barrelEntry());
+            return entityType.cast(createBarrel());
         } else if (entityType == Human.class) {
-            return entityType.cast(humanEntry());
+            return entityType.cast(createHuman());
         }
         return null;
     }
 
     public void printArray() {
-        for (int i=0; i<array.length; i++) {
-            System.out.println(i + ". " + array[i]);
+        if (array == null || array.length == 0) {
+            System.out.println("Нет обьектов в массиве");
+        } else {
+            for (int i = 0; i < array.length; i++) {
+                System.out.println("Объект " + i + ": " + array[i]);
+            }
         }
     }
 

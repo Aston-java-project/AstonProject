@@ -25,7 +25,7 @@ public class Main {
                     break;
                 }
                 case "3" : {
-                    // Search object
+                    UIService.binarySearch();
                     break;
                 }
                 case "4" : {
@@ -33,6 +33,10 @@ public class Main {
                     break;
                 }
                 case "5" : {
+                    UIService.getEntityInput().printArray();
+                    break;
+                }
+                case "9" : {
                     selectAction = "exit";
                     break;
                 }

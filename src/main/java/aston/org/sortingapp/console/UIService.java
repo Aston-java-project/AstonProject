@@ -20,7 +20,8 @@ public class UIService {
             "2. Сортировка массива",
             "3. Поиск элемента",
             "4. Сохранение в файл",
-            "5. Выход из программы"
+            "5. Вывод на экран",
+            "9. Выход из программы"
     };
     public static String[] inputOptions = {
             "1. Пользовательский ввод",
@@ -105,6 +106,38 @@ public class UIService {
         return -1;
     }
 
+    public static boolean binarySearch() {
+
+        System.out.println("Введиите данные для поиска");
+        Object obj = switch (classOption) {
+            case 1 -> (new InputByUser<>(Animal.class)).createAnimal();
+            case 2 -> (new InputByUser<>(Animal.class)).createBarrel();
+            case 3 -> (new InputByUser<>(Animal.class)).createHuman();
+            default -> null;
+        };
+
+        var array = entityInput.getArray();
+        if (array == null || array.length < 1) {
+            System.out.println("Нет объектов в массиве!");
+            return false;
+        }
+
+        if (array[0].getClass().isInstance(obj)) {
+            int index = BinarySearch.search(array, obj);
+            if (index < 0) {
+                System.out.println("Объект не найден");
+            } else {
+                System.out.println("Индекс элемента: " + index);
+            }
+        }
+
+        return true;
+    }
+
+    public static EntityInput getEntityInput() {
+        return entityInput;
+    }
+
     public static boolean applySort() {
         provideOptionsList("Выберите тип сортировки:", sortOptions);
         int sortOption = returnSelectedOption();
@@ -113,8 +146,8 @@ public class UIService {
         }
         var array = entityInput.getArray();
         if (array != null && array.length > 0) {
-            if (sortOption == 1) (new TimSort<>()).sort(array);
-            if (sortOption == 2) (new TimSortEven<>()).sort(array);
+            if (sortOption == 1) TimSort.sort(array);
+            if (sortOption == 2) TimSortEven.sort(array);
         } else {
             System.out.println("Нет элементов в массиве!");
         }
