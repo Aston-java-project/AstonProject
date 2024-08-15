@@ -13,7 +13,7 @@ public class UIService {
     private static Scanner scan = new Scanner(System.in);
     private static int inputOption;
     private static int classOption;
-    private static EntityInput entityInput;
+    private static AbstractInputMethod inputMethod;
 
     static String[] menuOptions = {
             "1. Инициализация массива",
@@ -61,19 +61,19 @@ public class UIService {
 
         if (entityType != null) {
             switch (inputOption) {
-                case 1 : entityInput = new InputByUser<>(entityType); break;
-                case 2 : entityInput = new InputFromFile<>(entityType); break;
-                case 3 : entityInput = new InputRandomly<>(entityType); break;
+                case 1 : inputMethod = new InputManually<>(entityType); break;
+                case 2 : inputMethod = new InputFromFile<>(entityType); break;
+                case 3 : inputMethod = new InputRandomly<>(entityType); break;
             }
-            entityInput.performInput();
-            entityInput.printArray();
+            inputMethod.createArray();
+            inputMethod.printArray();
         }
 
         return true;
     }
 
     public static boolean saveToFile() {
-        if (entityInput == null || entityInput.getArray().length < 1) {
+        if (inputMethod == null || inputMethod.getArray().length < 1) {
             System.out.println("Нет объектов для сохранения!");
             return false;
         }
@@ -85,7 +85,7 @@ public class UIService {
         };
 
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            out.writeObject(entityInput.getArray());
+            out.writeObject(inputMethod.getArray());
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -106,17 +106,21 @@ public class UIService {
         return -1;
     }
 
+    public static AbstractInputMethod getInputMethod() {
+        return inputMethod;
+    }
+
     public static boolean binarySearch() {
 
         System.out.println("Введиите данные для поиска");
         Object obj = switch (classOption) {
-            case 1 -> (new InputByUser<>(Animal.class)).createAnimal();
-            case 2 -> (new InputByUser<>(Animal.class)).createBarrel();
-            case 3 -> (new InputByUser<>(Animal.class)).createHuman();
+            case 1 -> EntityInputController.createEntity(Animal.class, new InputManually<>(Animal.class));
+            case 2 -> EntityInputController.createEntity(Barrel.class, new InputManually<>(Barrel.class));
+            case 3 -> EntityInputController.createEntity(Human.class, new InputManually<>(Human.class));
             default -> null;
         };
 
-        var array = entityInput.getArray();
+        var array = inputMethod.getArray();
         if (array == null || array.length < 1) {
             System.out.println("Нет объектов в массиве!");
             return false;
@@ -134,17 +138,13 @@ public class UIService {
         return true;
     }
 
-    public static EntityInput getEntityInput() {
-        return entityInput;
-    }
-
     public static boolean applySort() {
         provideOptionsList("Выберите тип сортировки:", sortOptions);
         int sortOption = returnSelectedOption();
         if (sortOption < 1 || sortOption > sortOptions.length) {
             return false;
         }
-        var array = entityInput.getArray();
+        var array = inputMethod.getArray();
         if (array != null && array.length > 0) {
             if (sortOption == 1) TimSort.sort(array);
             if (sortOption == 2) TimSortEven.sort(array);

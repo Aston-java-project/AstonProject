@@ -4,14 +4,14 @@ import aston.org.sortingapp.models.*;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 
-public class InputFromFile<T> extends EntityInput<T> {
+public class InputFromFile<T> extends AbstractInputMethod<T> {
 
     public InputFromFile(Class<T> entityType) {
         super(entityType);
     }
 
     @Override
-    public void performInput() {
+    public void createArray() {
         String fileName;
         if (entityType == Animal.class) {
             fileName = "Animal.data";
@@ -28,6 +28,13 @@ public class InputFromFile<T> extends EntityInput<T> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    @Override
+    protected <R> T read(Class<T> type, R[] randValues) {
+        // The array has already been initialized in the 'performInput()' method
+        return null;
     }
 
 }

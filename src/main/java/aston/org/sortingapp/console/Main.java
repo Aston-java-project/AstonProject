@@ -4,18 +4,18 @@ import java.util.Scanner;
 
 public class Main {
 
-    static String selectAction;
+    static String selectedAction;
 
     public static void main(String[] args) {
 
         Scanner scan = new Scanner(System.in);
-        selectAction = "";
+        selectedAction = "";
 
-        while (!"exit".equals(selectAction)) {
+        while (!"exit".equals(selectedAction)) {
             UIService.provideOptionsList("Выберите действие:", UIService.menuOptions);
-            selectAction = scan.next();
+            selectedAction = scan.next();
 
-            switch (selectAction) {
+            switch (selectedAction) {
                 case "1" : {
                     UIService.initArray();
                     break;
@@ -33,11 +33,11 @@ public class Main {
                     break;
                 }
                 case "5" : {
-                    UIService.getEntityInput().printArray();
+                    UIService.getInputMethod().printArray();
                     break;
                 }
                 case "9" : {
-                    selectAction = "exit";
+                    selectedAction = "exit";
                     break;
                 }
             }
