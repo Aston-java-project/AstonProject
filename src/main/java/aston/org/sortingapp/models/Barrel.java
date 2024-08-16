@@ -31,8 +31,17 @@ public class Barrel implements Comparable<Barrel>, Serializable {
 
     @Override
     public int compareTo(Barrel other) {
-        return Double.compare(this.volume, other.volume);
+        int volumeComparison = Double.compare(this.volume, other.volume);
+        if (volumeComparison != 0) {
+            return volumeComparison;
+        }
+        int storedMaterialComparison = this.storedMaterial.compareTo(other.storedMaterial);
+        if (storedMaterialComparison != 0) {
+            return storedMaterialComparison;
+        }
+        return this.material.compareTo(other.material);
     }
+
 
     public static class Builder {
         private double volume;

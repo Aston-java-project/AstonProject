@@ -31,7 +31,15 @@ public class Human implements Comparable<Human>, Serializable {
 
     @Override
     public int compareTo(Human other) {
-        return this.surname.compareTo(other.surname);
+        int surnameComparison = this.surname.compareTo(other.surname);
+        if (surnameComparison != 0) {
+            return surnameComparison;
+        }
+        int genderComparison = this.gender.compareTo(other.gender);
+        if (genderComparison != 0) {
+            return genderComparison;
+        }
+        return Integer.compare(this.age, other.age);
     }
 
     public static class Builder {
