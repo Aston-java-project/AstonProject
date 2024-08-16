@@ -2,6 +2,7 @@ package aston.org.sortingapp.input;
 
 import aston.org.sortingapp.models.*;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
 
 public class InputFromFile<T> extends AbstractInputMethod<T> {
@@ -11,7 +12,7 @@ public class InputFromFile<T> extends AbstractInputMethod<T> {
     }
 
     @Override
-    public void createArray() {
+    public boolean createArray() {
         String fileName;
         if (entityType == Animal.class) {
             fileName = "Animal.data";
@@ -25,15 +26,18 @@ public class InputFromFile<T> extends AbstractInputMethod<T> {
 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             array = (T[]) in.readObject();
+            return true;
+        } catch (FileNotFoundException e) {
+            System.out.println("Отсутствует файл с данными!");;
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        return false;
     }
 
     @Override
     protected <R> T read(Class<T> type, R[] randValues) {
-        // The array has already been initialized in the 'performInput()' method
+        // The array has already been initialized in the 'createArray' method
         return null;
     }
 

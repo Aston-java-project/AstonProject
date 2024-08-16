@@ -66,7 +66,7 @@ public class UIService {
                 case 3 : inputMethod = new InputRandomly<>(entityType); break;
             }
             inputMethod.createArray();
-            inputMethod.printArray();
+            printArray();
         }
 
         return true;
@@ -74,7 +74,7 @@ public class UIService {
 
     public static boolean saveToFile() {
         if (inputMethod == null || inputMethod.getArray().length < 1) {
-            System.out.println("Нет объектов для сохранения!");
+            System.out.println("Нет данных для сохранения!");
             return false;
         }
         String fileName = switch (classOption) {
@@ -90,7 +90,7 @@ public class UIService {
             e.printStackTrace();
             return false;
         }
-        System.out.println("Данные записаны в " + fileName);
+        System.out.println("Данные записаны в файл: " + fileName);
         return true;
     }
 
@@ -110,8 +110,35 @@ public class UIService {
         return inputMethod;
     }
 
-    public static boolean binarySearch() {
+    public static <T> T[] getArrayOrNull() {
+        if (inputMethod == null) {
+            System.out.println("Требуется инициализация массива!");
+            return null;
+        }
+        var array = inputMethod.getArray();
+        if (array == null || array.length == 0) {
+            System.out.println("Нет элементов в массиве!");
+            return null;
+        }
+        return (T[]) array;
+    }
 
+    public static boolean printArray() {
+        var array = getArrayOrNull();
+        if (array == null) {
+            return false;
+        }
+        for (int i = 0; i < array.length; i++) {
+            System.out.println("Объект " + i + ": " + array[i]);
+        }
+        return true;
+    }
+
+    public static boolean binarySearch() {
+        var array = getArrayOrNull();
+        if (array == null) {
+            return false;
+        }
         System.out.println("Введиите данные для поиска");
         Object obj = switch (classOption) {
             case 1 -> EntityInputController.createEntity(Animal.class, new InputManually<>(Animal.class));
@@ -119,39 +146,33 @@ public class UIService {
             case 3 -> EntityInputController.createEntity(Human.class, new InputManually<>(Human.class));
             default -> null;
         };
-
-        var array = inputMethod.getArray();
-        if (array == null || array.length < 1) {
-            System.out.println("Нет объектов в массиве!");
-            return false;
-        }
-
         if (array[0].getClass().isInstance(obj)) {
             int index = BinarySearch.search(array, obj);
-            if (index < 0) {
-                System.out.println("Объект не найден");
+            if (index >= 0) {
+                System.out.println("Индекс найденного элемента: " + index);
             } else {
-                System.out.println("Индекс объекта: " + index);
+                System.out.println("Элемент не найден");
             }
         }
 
         return true;
     }
 
-    public static boolean applySort() {
+    public static void applySortOption(SortStrategy strategy) {
+        Comparable[] array = getArrayOrNull();
+        if (array != null && array.length > 0) {
+            strategy.sort(array);
+        }
+    }
+
+    public static void applySort() {
         provideOptionsList("Выберите тип сортировки:", sortOptions);
         int sortOption = returnSelectedOption();
         if (sortOption < 1 || sortOption > sortOptions.length) {
-            return false;
+            return;
         }
-        var array = inputMethod.getArray();
-        if (array != null && array.length > 0) {
-            if (sortOption == 1) TimSort.sort(array);
-            if (sortOption == 2) TimSortEven.sort(array);
-        } else {
-            System.out.println("Нет объектов в массиве!");
-        }
-        return true;
+        if (sortOption == 1) applySortOption(new TimSort());
+        if (sortOption == 2) applySortOption(new TimSortEven());
     }
 
 

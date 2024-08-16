@@ -12,7 +12,7 @@ public class Main {
         selectedAction = "";
 
         while (!"exit".equals(selectedAction)) {
-            UIService.provideOptionsList("Выберите действие:", UIService.menuOptions);
+            UIService.provideOptionsList("\nВыберите действие:", UIService.menuOptions);
             selectedAction = scan.next();
 
             switch (selectedAction) {
@@ -33,7 +33,7 @@ public class Main {
                     break;
                 }
                 case "5" : {
-                    UIService.getInputMethod().printArray();
+                    UIService.printArray();
                     break;
                 }
                 case "9" : {

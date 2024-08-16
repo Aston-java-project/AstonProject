@@ -16,12 +16,13 @@ public abstract class AbstractInputMethod<T> {
 
     protected abstract <R> T read(Class<T> type, R[] randValues);
 
-    public void createArray() {
+    public boolean createArray() {
         int arrayLength = getElementsCount();
         array = (T[]) Array.newInstance(entityType, arrayLength);
         for(int i=0; i<arrayLength; i++) {
             array[i] = createInstance();
         }
+        return true;
     }
 
     protected  int getElementsCount() {
@@ -30,21 +31,15 @@ public abstract class AbstractInputMethod<T> {
             System.out.println("Неверное значение. Введите целое число.");
             scan.next();
         }
-        return scan.nextInt();
+        int i = scan.nextInt();
+        if (i < 0) {
+            System.out.println("Недопустимое количество элементов! ");
+        }
+        return Math.max(i, 0);
     }
 
     protected T createInstance() {
         return EntityInputController.createEntity(entityType, this);
-    }
-
-    public void printArray() {
-        if (array == null || array.length == 0) {
-            System.out.println("Нет обьектов в массиве");
-        } else {
-            for (int i = 0; i < array.length; i++) {
-                System.out.println("Объект " + i + ": " + array[i]);
-            }
-        }
     }
 
     public T[] getArray() {
