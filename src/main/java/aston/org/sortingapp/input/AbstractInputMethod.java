@@ -14,13 +14,13 @@ public abstract class AbstractInputMethod<T> {
         scan = new Scanner(System.in);
     }
 
-    protected abstract <R> T read(Class<T> type, R[] randValues);
+    protected abstract <R> T initField(Class<T> type, R[] randValues);
 
     public boolean createArray() {
         int arrayLength = getElementsCount();
         array = (T[]) Array.newInstance(entityType, arrayLength);
         for(int i=0; i<arrayLength; i++) {
-            array[i] = createInstance();
+            array[i] = initField();
         }
         return true;
     }
@@ -38,7 +38,7 @@ public abstract class AbstractInputMethod<T> {
         return Math.max(i, 0);
     }
 
-    protected T createInstance() {
+    protected T initField() {
         return EntityInputController.createEntity(entityType, this);
     }
 

@@ -18,7 +18,7 @@ public class InputRandomly<T> extends AbstractInputMethod<T> {
     };
 
     @Override
-    protected <R> T read(Class<T> type, R[] randValues) {
+    protected <R> T initField(Class<T> type, R[] randValues) {
         T value;
         int randomIndex = (randValues.length > 1) ? random.nextInt(randValues.length) : 0;
 
