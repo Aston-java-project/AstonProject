@@ -11,7 +11,7 @@ public class InputFromFile<T> extends AbstractInputMethod<T> {
     }
 
     @Override
-    public boolean createArray() {
+    public void createArray(EntityInputController<T> ic) {
         String fileName;
         if (entityType == Animal.class) {
             fileName = "Animal.data";
@@ -25,9 +25,8 @@ public class InputFromFile<T> extends AbstractInputMethod<T> {
 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             array = (T[]) in.readObject();
-            return true;
         } catch (FileNotFoundException e) {
-            System.out.println("Отсутствует файл с данными!");;
+            System.out.println("Отсутствует файл с данными!");
         } catch (EOFException e) {
             System.out.println("Неожиданный конец файла!");
         } catch (StreamCorruptedException e) {
@@ -36,13 +35,11 @@ public class InputFromFile<T> extends AbstractInputMethod<T> {
             System.out.println("Ошибка ввода/вывода");
         } catch (Exception e) {
             System.err.println("Произошла непредвиденная ошибка: " + e.getMessage());
-            e.printStackTrace();
         }
-        return false;
     }
 
     @Override
-    protected <R> T initField(Class<T> type, R[] randValues) {
+    protected <V> V initField(Class<V> type, V[] randValues) {
         // The array has already been initialized in the 'createArray' method
         return null;
     }

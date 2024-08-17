@@ -21,7 +21,7 @@ public class Main {
                     break;
                 }
                 case "2" : {
-                    UIService.applySort();
+                    UIService.arraySort();
                     break;
                 }
                 case "3" : {
@@ -37,7 +37,11 @@ public class Main {
                     break;
                 }
                 case "9" : {
-                    selectedAction = "exit";
+                    System.exit(0);
+                    break;
+                }
+                default: {
+                    System.out.println("Действие не выбрано");
                     break;
                 }
             }

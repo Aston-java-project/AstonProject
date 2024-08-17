@@ -6,8 +6,8 @@ public class InputManually<T> extends AbstractInputMethod<T> {
         super(entityType);
     }
 
-    protected <R> T initField(Class<T> type, R[] randValues) {
-        T value;
+    protected <V> V initField(Class<V> type, V[] randValues) {
+        V value;
         if (type == String.class) {
             value = type.cast(scan.next());
         } else if (type == Integer.class) {

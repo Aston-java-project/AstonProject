@@ -14,15 +14,14 @@ public abstract class AbstractInputMethod<T> {
         scan = new Scanner(System.in);
     }
 
-    protected abstract <R> T initField(Class<T> type, R[] randValues);
+    protected abstract <V> V initField(Class<V> type, V[] randValues);
 
-    public boolean createArray() {
+    public void createArray(EntityInputController<T> ic) {
         int arrayLength = getElementsCount();
         array = (T[]) Array.newInstance(entityType, arrayLength);
         for(int i=0; i<arrayLength; i++) {
-            array[i] = initField();
+            array[i] = ic.createEntity(entityType, this);
         }
-        return true;
     }
 
     protected  int getElementsCount() {
@@ -32,14 +31,10 @@ public abstract class AbstractInputMethod<T> {
             scan.next();
         }
         int i = scan.nextInt();
-        if (i < 0) {
-            System.out.println("Недопустимое количество элементов! ");
+        if (i <= 0) {
+            System.out.println("Недопустимое количество элементов! Введите положительное число.");
         }
         return Math.max(i, 0);
-    }
-
-    protected T initField() {
-        return EntityInputController.createEntity(entityType, this);
     }
 
     public T[] getArray() {

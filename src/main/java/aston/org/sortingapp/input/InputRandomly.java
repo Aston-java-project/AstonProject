@@ -11,15 +11,15 @@ public class InputRandomly<T> extends AbstractInputMethod<T> {
         random = new Random();
     }
 
-    private Integer randomInteger(int a, int b) { return random.nextInt(a, b); };
+    private Integer randomInteger(int a, int b) { return random.nextInt(a, b); }
     private Double randomDouble(double a, double b) {
         double value = random.nextDouble(a, b);
         return value - value % 0.1;
-    };
+    }
 
     @Override
-    protected <R> T initField(Class<T> type, R[] randValues) {
-        T value;
+    protected <V> V initField(Class<V> type, V[] randValues) {
+        V value;
         int randomIndex = (randValues.length > 1) ? random.nextInt(randValues.length) : 0;
 
         if (type == String.class) {
