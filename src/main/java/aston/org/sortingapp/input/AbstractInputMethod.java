@@ -31,7 +31,7 @@ public abstract class AbstractInputMethod<T> {
             scan.next();
         }
         int i = scan.nextInt();
-        if (i < 0) {
+        if (i <= 0) {
             System.out.println("Недопустимое количество элементов! Введите положительное число.");
         }
         return Math.max(i, 0);
