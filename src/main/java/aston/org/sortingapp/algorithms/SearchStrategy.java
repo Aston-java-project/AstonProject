@@ -1,4 +1,4 @@
-package aston.org.searching;
+package aston.org.sortingapp.algorithms;
 
 import java.util.List;
 

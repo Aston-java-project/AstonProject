@@ -3,9 +3,7 @@ package aston.org.sortingapp.models;
 import java.io.Serializable;
 
 public class Animal implements Comparable<Animal>, Serializable {
-    /*Имплементирует интерфейс Comparable или Comparator.
-    Также должен реализовывать паттерн Builder
-     */
+
     private static final long serialVersionUID = 1L;
     private final String species;
     private final String eyeColor;
