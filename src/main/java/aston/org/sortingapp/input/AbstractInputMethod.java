@@ -14,15 +14,14 @@ public abstract class AbstractInputMethod<T> {
         scan = new Scanner(System.in);
     }
 
-    protected abstract <R> T initField(Class<T> type, R[] randValues);
+    protected abstract T initField(Class<T> type, T[] randValues);
 
-    public boolean createArray() {
+    public void createArray() {
         int arrayLength = getElementsCount();
         array = (T[]) Array.newInstance(entityType, arrayLength);
         for(int i=0; i<arrayLength; i++) {
             array[i] = initField();
         }
-        return true;
     }
 
     protected  int getElementsCount() {

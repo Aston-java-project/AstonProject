@@ -2,37 +2,31 @@ package aston.org.sortingapp.input;
 
 import aston.org.sortingapp.models.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class EntityInputController {
 
     protected static AbstractInputMethod entityInput;
 
-    public static <T,V> void setField(String prompt, Consumer<T> setter, Class<T> type, T[] randValues) {
+    public static <T> void setField(String prompt, Consumer<T> setter, Class<T> type, T[] randValues) {
         if (entityInput instanceof InputManually) {
             System.out.println(prompt);
         }
         T value = type.cast(entityInput.initField(type, randValues));
-        setter.accept((T)value);
+        setter.accept(value);
     }
 
     public static <T> T createEntity(Class<T> entityType, AbstractInputMethod entityInput) {
         EntityInputController.entityInput = entityInput;
-        if (entityType == Animal.class) {
-            return (T) new AnimalInitializer().init();
-        } else if (entityType == Barrel.class) {
-            return (T) new BarrelInitializer().init();
-        } else if (entityType == Human.class) {
-            return (T) new HumanInitializer().init();
-        } else {
-            return null;
-        }
+        return switch (entityType.getSimpleName()) {
+            case "Animal" -> (T) new AnimalInitializer().get();
+            case "Barrel" -> (T) new BarrelInitializer().get();
+            case "Human" -> (T) new HumanInitializer().get();
+            default -> null;
+        };
     }
 
-    private interface EntityInitialize <T> {
-        T init();
-    }
-
-    private static class AnimalInitializer implements EntityInitialize<Animal> {
+    private static class AnimalInitializer implements Supplier<Animal> {
         private static final String[] Species = {
                 "Wolf", "Bear", "Elephant", "Coyote", "Rabbit",
                 "Kangaroo", "Penguin", "Horse", "Leopard", "Fox"
@@ -43,7 +37,7 @@ public class EntityInputController {
         };
         private static final Boolean[] Fur = { true, false };
         @Override
-        public Animal init() {
+        public Animal get() {
             Animal.Builder builder = new Animal.Builder();
             EntityInputController.setField("Введите вид животного", builder::setSpecies, String.class, Species);
             EntityInputController.setField("Введите цвет глаз животного", builder::setEyeColor, String.class, EyeColor);
@@ -52,7 +46,7 @@ public class EntityInputController {
         }
     }
 
-    private static class BarrelInitializer implements EntityInitialize<Barrel> {
+    private static class BarrelInitializer implements Supplier<Barrel> {
         private static final Double[] Volume = { 5., 200. };
         private static final String[] StoredMaterial = {
                 "Water", "Oil", "Wine", "Beer", "Grain",
@@ -62,7 +56,8 @@ public class EntityInputController {
                 "Wood", "Steel", "Plastic", "Aluminum", "Iron",
                 "Copper", "Fiberglass", "Ceramic", "Titanium"
         };
-        public Barrel init() {
+        @Override
+        public Barrel get() {
             Barrel.Builder builder = new Barrel.Builder();
             EntityInputController.setField("Введите объем бочки", builder::setVolume, Double.class, Volume);
             EntityInputController.setField("Введите хранимый материал", builder::setStoredMaterial, String.class, StoredMaterial);
@@ -71,14 +66,15 @@ public class EntityInputController {
         }
     }
 
-    private static class HumanInitializer implements EntityInitialize<Human> {
+    private static class HumanInitializer implements Supplier<Human> {
         private static final String[] Gender = { "male", "female" };
         private static final Integer[] Age = { 0, 120 };
         private static final String[] Surname = {
                 "Ashworth", "Raynott", "Jarsdel", "Southway", "Silsbury",
                 "Ravensdale", "Boulstridge", "Clayworth", "Edeson", "Lowsley"
         };
-        public Human init() {
+        @Override
+        public Human get() {
             Human.Builder builder = new Human.Builder();
             EntityInputController.setField("Введите пол", builder::setGender, String.class, Gender);
             EntityInputController.setField("Введите возраст", builder::setAge, Integer.class, Age);

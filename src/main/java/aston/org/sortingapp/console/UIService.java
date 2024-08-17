@@ -10,8 +10,7 @@ import java.io.ObjectOutputStream;
 
 public class UIService {
 
-    private static Scanner scan = new Scanner(System.in);
-    private static int inputOption;
+    private static final Scanner scan = new Scanner(System.in);
     private static int classOption;
     private static AbstractInputMethod inputMethod;
 
@@ -38,18 +37,16 @@ public class UIService {
             "2. Сортировка по четным значениям",
     };
 
-    public static boolean initArray() {
-
+    public static void initArray() {
         provideOptionsList("Выберите способ ввода", inputOptions);
-        inputOption = returnSelectedOption();
+        int inputOption = returnSelectedOption();
         if (inputOption < 1 || inputOption > inputOptions.length) {
-            return false;
+            return;
         }
-
         provideOptionsList("Выберите класс", classOptions);
         classOption = returnSelectedOption();
         if (classOption < 1 || classOption > classOptions.length) {
-            return false;
+            return;
         }
 
         Class<?> entityType = switch (classOption) {
@@ -58,7 +55,6 @@ public class UIService {
             case 3 -> Human.class;
             default -> null;
         };
-
         if (entityType != null) {
             switch (inputOption) {
                 case 1 : inputMethod = new InputManually<>(entityType); break;
@@ -68,14 +64,12 @@ public class UIService {
             inputMethod.createArray();
             printArray();
         }
-
-        return true;
     }
 
-    public static boolean saveToFile() {
+    public static void saveToFile() {
         if (inputMethod == null || inputMethod.getArray().length < 1) {
             System.out.println("Нет данных для сохранения!");
-            return false;
+            return;
         }
         String fileName = switch (classOption) {
             case 1 -> "Animal.data";
@@ -83,15 +77,12 @@ public class UIService {
             case 3 -> "Human.data";
             default -> "Other.data";
         };
-
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeObject(inputMethod.getArray());
+            System.out.println("Данные записаны в файл: " + fileName);
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            System.out.println("Ошибка записи: " + e.getMessage());
         }
-        System.out.println("Данные записаны в файл: " + fileName);
-        return true;
     }
 
     public static void provideOptionsList(String prompt, String[] options) {
@@ -106,11 +97,7 @@ public class UIService {
         return -1;
     }
 
-    public static AbstractInputMethod getInputMethod() {
-        return inputMethod;
-    }
-
-    public static <T> T[] getArrayOrNull() {
+    public static Object[] getArrayOrNull() {
         if (inputMethod == null) {
             System.out.println("Требуется инициализация массива!");
             return null;
@@ -120,24 +107,23 @@ public class UIService {
             System.out.println("Нет элементов в массиве!");
             return null;
         }
-        return (T[]) array;
+        return array;
     }
 
-    public static boolean printArray() {
+    public static void printArray() {
         var array = getArrayOrNull();
         if (array == null) {
-            return false;
+            return;
         }
         for (int i = 0; i < array.length; i++) {
             System.out.println("Объект " + i + ": " + array[i]);
         }
-        return true;
     }
 
-    public static boolean binarySearch() {
+    public static void binarySearch() {
         var array = getArrayOrNull();
         if (array == null) {
-            return false;
+            return;
         }
         System.out.println("Введиите данные для поиска");
         Object obj = switch (classOption) {
@@ -154,14 +140,12 @@ public class UIService {
                 System.out.println("Элемент не найден");
             }
         }
-
-        return true;
     }
 
-    public static void applySortOption(SortStrategy strategy) {
-        Comparable[] array = getArrayOrNull();
+    private static void applySortOption(SortStrategy<Object> strategy) {
+        var array = getArrayOrNull();
         if (array != null && array.length > 0) {
-            strategy.sort(array);
+            strategy.sort((Comparable[]) array);
         }
     }
 
@@ -171,8 +155,8 @@ public class UIService {
         if (sortOption < 1 || sortOption > sortOptions.length) {
             return;
         }
-        if (sortOption == 1) applySortOption(new TimSort());
-        if (sortOption == 2) applySortOption(new TimSortEven());
+        if (sortOption == 1) applySortOption(new TimSort<>());
+        if (sortOption == 2) applySortOption(new TimSortEven<>());
     }
 
 
