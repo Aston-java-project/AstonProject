@@ -4,29 +4,30 @@ import aston.org.sortingapp.models.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class EntityInputController {
+public class EntityInputController <T> {
 
-    protected static AbstractInputMethod entityInput;
+    protected AbstractInputMethod<T> entityInput;
 
-    public static <T> void setField(String prompt, Consumer<T> setter, Class<T> type, T[] randValues) {
+    public <V> void setField(String prompt, Consumer<V> setter, Class<V> type, V[] randValues) {
         if (entityInput instanceof InputManually) {
             System.out.println(prompt);
         }
-        T value = type.cast(entityInput.initField(type, randValues));
+        V value = type.cast(entityInput.initField(type, randValues));
         setter.accept(value);
     }
 
-    public static <T> T createEntity(Class<T> entityType, AbstractInputMethod entityInput) {
-        EntityInputController.entityInput = entityInput;
+    public T createEntity(Class<T> entityType, AbstractInputMethod<T> entityInput) {
+        this.entityInput = entityInput;
         return switch (entityType.getSimpleName()) {
-            case "Animal" -> (T) new AnimalInitializer().get();
-            case "Barrel" -> (T) new BarrelInitializer().get();
-            case "Human" -> (T) new HumanInitializer().get();
+            case "Animal" -> entityType.cast(new AnimalInitializer().get());
+            case "Barrel" -> entityType.cast(new BarrelInitializer().get());
+            case "Human" -> entityType.cast(new HumanInitializer().get());
             default -> null;
         };
+
     }
 
-    private static class AnimalInitializer implements Supplier<Animal> {
+    private class AnimalInitializer implements Supplier<Animal> {
         private static final String[] Species = {
                 "Wolf", "Bear", "Elephant", "Coyote", "Rabbit",
                 "Kangaroo", "Penguin", "Horse", "Leopard", "Fox"
@@ -39,14 +40,14 @@ public class EntityInputController {
         @Override
         public Animal get() {
             Animal.Builder builder = new Animal.Builder();
-            EntityInputController.setField("Введите вид животного", builder::setSpecies, String.class, Species);
-            EntityInputController.setField("Введите цвет глаз животного", builder::setEyeColor, String.class, EyeColor);
-            EntityInputController.setField("Введите наличие шерсти", builder::setFur, Boolean.class, Fur);
+            setField("Введите вид животного", builder::setSpecies, String.class, Species);
+            setField("Введите цвет глаз животного", builder::setEyeColor, String.class, EyeColor);
+            setField("Введите наличие шерсти", builder::setFur, Boolean.class, Fur);
             return builder.build();
         }
     }
 
-    private static class BarrelInitializer implements Supplier<Barrel> {
+    private class BarrelInitializer implements Supplier<Barrel> {
         private static final Double[] Volume = { 5., 200. };
         private static final String[] StoredMaterial = {
                 "Water", "Oil", "Wine", "Beer", "Grain",
@@ -59,14 +60,14 @@ public class EntityInputController {
         @Override
         public Barrel get() {
             Barrel.Builder builder = new Barrel.Builder();
-            EntityInputController.setField("Введите объем бочки", builder::setVolume, Double.class, Volume);
-            EntityInputController.setField("Введите хранимый материал", builder::setStoredMaterial, String.class, StoredMaterial);
-            EntityInputController.setField("Введите материал изготовления", builder::setMaterial, String.class, Material);
+            setField("Введите объем бочки", builder::setVolume, Double.class, Volume);
+            setField("Введите хранимый материал", builder::setStoredMaterial, String.class, StoredMaterial);
+            setField("Введите материал изготовления", builder::setMaterial, String.class, Material);
             return builder.build();
         }
     }
 
-    private static class HumanInitializer implements Supplier<Human> {
+    private class HumanInitializer implements Supplier<Human> {
         private static final String[] Gender = { "male", "female" };
         private static final Integer[] Age = { 0, 120 };
         private static final String[] Surname = {
@@ -76,9 +77,9 @@ public class EntityInputController {
         @Override
         public Human get() {
             Human.Builder builder = new Human.Builder();
-            EntityInputController.setField("Введите пол", builder::setGender, String.class, Gender);
-            EntityInputController.setField("Введите возраст", builder::setAge, Integer.class, Age);
-            EntityInputController.setField("Введите фамилию", builder::setSurname, String.class, Surname);
+            setField("Введите пол", builder::setGender, String.class, Gender);
+            setField("Введите возраст", builder::setAge, Integer.class, Age);
+            setField("Введите фамилию", builder::setSurname, String.class, Surname);
             return builder.build();
         }
     }

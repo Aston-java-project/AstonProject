@@ -39,12 +39,12 @@ public class UIService {
 
     public static void initArray() {
         provideOptionsList("Выберите способ ввода", inputOptions);
-        int inputOption = returnSelectedOption();
+        int inputOption = getSelectedOption();
         if (inputOption < 1 || inputOption > inputOptions.length) {
             return;
         }
         provideOptionsList("Выберите класс", classOptions);
-        classOption = returnSelectedOption();
+        classOption = getSelectedOption();
         if (classOption < 1 || classOption > classOptions.length) {
             return;
         }
@@ -61,7 +61,7 @@ public class UIService {
                 case 2 : inputMethod = new InputFromFile<>(entityType); break;
                 case 3 : inputMethod = new InputRandomly<>(entityType); break;
             }
-            inputMethod.createArray();
+            inputMethod.createArray(new EntityInputController<>());
             printArray();
         }
     }
@@ -90,7 +90,7 @@ public class UIService {
         Arrays.stream(options).forEach(System.out::println);
     }
 
-    public static int returnSelectedOption() {
+    public static int getSelectedOption() {
         if (scan.hasNextInt()) {
             return scan.nextInt();
         }
@@ -115,7 +115,8 @@ public class UIService {
         if (array == null) {
             return;
         }
-        for (int i = 0; i < array.length; i++) {
+        for (
+                int i = 0; i < array.length; i++) {
             System.out.println("Объект " + i + ": " + array[i]);
         }
     }
@@ -127,9 +128,9 @@ public class UIService {
         }
         System.out.println("Введиите данные для поиска");
         Object obj = switch (classOption) {
-            case 1 -> EntityInputController.createEntity(Animal.class, new InputManually<>(Animal.class));
-            case 2 -> EntityInputController.createEntity(Barrel.class, new InputManually<>(Barrel.class));
-            case 3 -> EntityInputController.createEntity(Human.class, new InputManually<>(Human.class));
+            case 1 -> new EntityInputController<Animal>().createEntity(Animal.class, new InputManually<>(Animal.class));
+            case 2 -> new EntityInputController<Barrel>().createEntity(Barrel.class, new InputManually<>(Barrel.class));
+            case 3 -> new EntityInputController<Human>().createEntity(Human.class, new InputManually<>(Human.class));
             default -> null;
         };
         if (array[0].getClass().isInstance(obj)) {
@@ -142,21 +143,21 @@ public class UIService {
         }
     }
 
-    private static void applySortOption(SortStrategy<Object> strategy) {
-        var array = getArrayOrNull();
-        if (array != null && array.length > 0) {
-            strategy.sort((Comparable[]) array);
-        }
-    }
-
-    public static void applySort() {
+    public static void arraySort() {
         provideOptionsList("Выберите тип сортировки:", sortOptions);
-        int sortOption = returnSelectedOption();
+        int sortOption = getSelectedOption();
         if (sortOption < 1 || sortOption > sortOptions.length) {
             return;
         }
-        if (sortOption == 1) applySortOption(new TimSort<>());
-        if (sortOption == 2) applySortOption(new TimSortEven<>());
+        SortStrategy<Object> strategy = switch(sortOption) {
+            case 1 -> new TimSort<>();
+            case 2 -> new TimSortEven<>();
+            default -> null;
+        };
+        var array = getArrayOrNull();
+        if (array != null && array.length > 0 && strategy != null) {
+            strategy.sort((Comparable[]) array);
+        }
     }
 
 

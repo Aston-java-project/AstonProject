@@ -11,7 +11,7 @@ public class InputFromFile<T> extends AbstractInputMethod<T> {
     }
 
     @Override
-    public void createArray() {
+    public void createArray(EntityInputController<T> ic) {
         String fileName;
         if (entityType == Animal.class) {
             fileName = "Animal.data";
@@ -39,7 +39,7 @@ public class InputFromFile<T> extends AbstractInputMethod<T> {
     }
 
     @Override
-    protected T initField(Class<T> type, T[] randValues) {
+    protected <V> V initField(Class<V> type, V[] randValues) {
         // The array has already been initialized in the 'createArray' method
         return null;
     }
