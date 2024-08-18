@@ -1,19 +1,15 @@
 package aston.org.sortingapp.console;
 
-import java.util.Scanner;
-
 public class Main {
 
     static String selectedAction;
 
     public static void main(String[] args) {
 
-        Scanner scan = new Scanner(System.in);
         selectedAction = "";
-
-        while (!"exit".equals(selectedAction)) {
+        while (!"exit".equals(selectedAction) && !"выход".equals(selectedAction)) {
             UIService.provideOptionsList("\nВыберите действие:", UIService.menuOptions);
-            selectedAction = scan.next();
+            selectedAction = UIService.scan.next().trim().toLowerCase();
 
             switch (selectedAction) {
                 case "1" : {

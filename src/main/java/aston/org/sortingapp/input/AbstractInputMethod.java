@@ -24,6 +24,10 @@ public abstract class AbstractInputMethod<T> {
         }
     }
 
+    public Class<T> getEntityType() {
+        return entityType;
+    }
+
     protected  int getElementsCount() {
         System.out.println("Введите длину массива");
         while (!scan.hasNextInt()) {

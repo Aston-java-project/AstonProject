@@ -2,7 +2,6 @@ package aston.org.sortingapp.console;
 
 import aston.org.sortingapp.algorithms.*;
 import aston.org.sortingapp.input.*;
-import aston.org.sortingapp.models.*;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.io.FileOutputStream;
@@ -10,7 +9,7 @@ import java.io.ObjectOutputStream;
 
 public class UIService {
 
-    private static final Scanner scan = new Scanner(System.in);
+    protected static final Scanner scan = new Scanner(System.in);
     private static int classOption;
     private static AbstractInputMethod<?> inputMethod;
 
@@ -22,16 +21,6 @@ public class UIService {
             "5. Вывод на экран",
             "9. Выход из программы"
     };
-    public static String[] inputOptions = {
-            "1. Пользовательский ввод",
-            "2. Чтение из файла",
-            "3. Генерация случайных объектов"
-    };
-    static String[] classOptions = {
-            "1. Animal",
-            "2. Barrel",
-            "3. Human"
-    };
     static String[] sortOptions = {
             "1. Нормальная сортировка",
             "2. Сортировка по четным значениям",
@@ -41,23 +30,17 @@ public class UIService {
     };
 
     public static void initArray() {
-        provideOptionsList("Выберите способ ввода", inputOptions);
-        int inputOption = getSelectedOption(inputOptions.length);
+        provideOptionsList("Выберите способ ввода", EntityInputController.inputOptions);
+        int inputOption = getSelectedOption(EntityInputController.inputOptions.length);
         if (inputOption <= 0) {
             return;
         }
-        provideOptionsList("Выберите класс", classOptions);
-        classOption = getSelectedOption(classOptions.length);
+        provideOptionsList("Выберите класс", EntityInputController.classOptions);
+        classOption = getSelectedOption(EntityInputController.classOptions.length);
         if (classOption <= 0) {
             return;
         }
-
-        Class<?> entityType = switch (classOption) {
-            case 1 -> Animal.class;
-            case 2 -> Barrel.class;
-            case 3 -> Human.class;
-            default -> null;
-        };
+        Class<?> entityType = EntityInputController.getOptionType(classOption);
         if (entityType != null) {
             switch (inputOption) {
                 case 1 : inputMethod = new InputManually<>(entityType); break;
@@ -65,7 +48,7 @@ public class UIService {
                 case 3 : inputMethod = new InputRandomly<>(entityType); break;
             }
             inputMethod.createArray(new EntityInputController<>());
-            printArray();
+            System.out.println("Создан массив размера " + inputMethod.getArray().length + ". Тип элементов: " + entityType.getSimpleName());
         }
     }
 
@@ -74,12 +57,8 @@ public class UIService {
             System.out.println("Нет данных для сохранения!");
             return;
         }
-        String fileName = switch (classOption) {
-            case 1 -> "Animal.data";
-            case 2 -> "Barrel.data";
-            case 3 -> "Human.data";
-            default -> "Other.data";
-        };
+        String fileName = inputMethod.getEntityType().getSimpleName() + ".data";
+
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeObject(inputMethod.getArray());
             System.out.println("Данные записаны в файл: " + fileName);
@@ -94,13 +73,16 @@ public class UIService {
     }
 
     public static int getSelectedOption(int max) {
+        int n;
         if (scan.hasNextInt()) {
-            int i = scan.nextInt();
-            if (i <= max && i > 0) {
-                return i;
+            n = scan.nextInt();
+            if (n <= max && n > 0) {
+                return n;
             }
+            System.out.printf("Указанная опция отсутствует (%s)\n", n);
+        } else {
+            System.out.printf("Указанная опция отсутствует (%s)\n", scan.next());
         }
-        System.out.println("Указанная опция отсутствует");
         return -1;
     }
 
@@ -132,37 +114,22 @@ public class UIService {
         if (array == null) {
             return;
         }
-        provideOptionsList("Выберите тип сортировки:", searchOptions);
+        provideOptionsList("Выберите тип поиска:", searchOptions);
         int searchOption = getSelectedOption(searchOptions.length);
         if (searchOption < 0) {
             return;
         }
-        System.out.println("Введиите данные для поиска");
-        var obj = switch (classOption) {
-            case 1 -> new EntityInputController<Animal>().createEntity(Animal.class, new InputManually<>(Animal.class));
-            case 2 -> new EntityInputController<Barrel>().createEntity(Barrel.class, new InputManually<>(Barrel.class));
-            case 3 -> new EntityInputController<Human>().createEntity(Human.class, new InputManually<>(Human.class));
-            default -> null;
-        };
+        System.out.println("Введите данные для поиска");
+        var obj = EntityInputController.createKey(classOption);
         SearchStrategy strategy = switch(searchOption) {
             case 1 -> new BinarySearch<>();
             default -> null;
         };
-        int index = strategy.search((Comparable[])array, obj);
+        int index = strategy.search((Comparable[]) array, (Comparable) obj);
         if (index >= 0) {
             System.out.println("Индекс найденного элемента: " + index);
         } else {
             System.out.println("Элемент не найден");
-        }
-    }
-
-    private static TimSortEven.NumericFieldAccessor<?> createAccessor() {
-        switch (classOption) {
-            case 1 : return animal -> ((Animal)animal).getSpecies().length();
-            case 2 : return barrel -> ((Barrel)barrel).getVolume();
-            case 3 : return human -> ((Human)human).getAge();
-            case 4 : return animal -> ((Animal)animal).hashCode();
-            default : return null;
         }
     }
 
@@ -172,7 +139,7 @@ public class UIService {
         if (sortOption > 0) {
             SortStrategy<?> strategy = switch (sortOption) {
                 case 1 -> new TimSort<>();
-                case 2 -> new TimSortEven<>(createAccessor());
+                case 2 -> new TimSortEven<>(EntityInputController.createAccessor(classOption));
                 default -> null;
             };
             var array = getArrayOrNull();

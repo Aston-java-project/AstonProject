@@ -1,11 +1,22 @@
 package aston.org.sortingapp.input;
 
+import aston.org.sortingapp.algorithms.TimSortEven;
 import aston.org.sortingapp.models.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class EntityInputController <T> {
 
+    public final static String[] inputOptions = {
+            "1. Пользовательский ввод",
+            "2. Чтение из файла",
+            "3. Генерация случайных объектов"
+    };
+    public final static String[] classOptions = {
+            "1. Animal",
+            "2. Barrel",
+            "3. Human"
+    };
     protected AbstractInputMethod<T> entityInput;
 
     public <V> void setField(String prompt, Consumer<V> setter, Class<V> type, V[] randValues) {
@@ -24,7 +35,33 @@ public class EntityInputController <T> {
             case "Human" -> entityType.cast(new HumanInitializer().get());
             default -> null;
         };
+    }
 
+    public static TimSortEven.NumericFieldAccessor<?> createAccessor(int classOption) {
+        return switch (classOption) {
+            case 1 -> animal -> ((Animal) animal).getSpecies().length();
+            case 2 -> barrel -> ((Barrel) barrel).getVolume();
+            case 3 -> human -> ((Human) human).getAge();
+            default -> null;
+        };
+    }
+
+    public static Class<?> getOptionType(int option) {
+        return switch (option) {
+            case 1 -> Animal.class;
+            case 2 -> Barrel.class;
+            case 3 -> Human.class;
+            default -> null;
+        };
+    }
+
+    public static Object createKey(int option) {
+        return switch (option) {
+            case 1 -> new EntityInputController<Animal>().createEntity(Animal.class, new InputManually<>(Animal.class));
+            case 2 -> new EntityInputController<Barrel>().createEntity(Barrel.class, new InputManually<>(Barrel.class));
+            case 3 -> new EntityInputController<Human>().createEntity(Human.class, new InputManually<>(Human.class));
+            default -> null;
+        };
     }
 
     private class AnimalInitializer implements Supplier<Animal> {
