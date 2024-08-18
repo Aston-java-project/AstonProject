@@ -26,7 +26,7 @@ public class TimSort <T> implements SortStrategy<T>{
                 lengtRun++;
             }else{
                 if(lengtRun < minrun){
-                    lengtRun = Math.min(minrun, lengtRun + (N - currentIndexArr - 1));
+                    lengtRun = Math.min(minrun, lengtRun + (N - currentIndexArr));
                 }
                 insertionSort(arr, startRun, startRun + lengtRun - 1, startRun);
                 stack.push(new Range(startRun, lengtRun));
