@@ -26,7 +26,7 @@ public class TimSort <T> implements SortStrategy<T>{
                 lengtRun++;
             }else{
                 if(lengtRun < minrun){
-                    lengtRun = Math.min(minrun, lengtRun + (N - currentIndexArr));
+                    lengtRun = Math.min(minrun, lengtRun + (N - currentIndexArr - 1));
                 }
                 insertionSort(arr, startRun, startRun + lengtRun - 1, startRun);
                 stack.push(new Range(startRun, lengtRun));
@@ -58,6 +58,7 @@ public class TimSort <T> implements SortStrategy<T>{
 
     private void insertionSort(Comparable<T>[] arr, int start, int end, int startSort) {
         for (int i = startSort; i <= end; ++i) {
+            System.out.println(i);
             T current = (T)arr[i];
             int j = i - 1;
             while ((j >= start) && (arr[j].compareTo(current) > 0)) {
