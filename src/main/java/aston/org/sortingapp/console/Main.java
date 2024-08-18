@@ -25,7 +25,7 @@ public class Main {
                     break;
                 }
                 case "3" : {
-                    UIService.binarySearch();
+                    UIService.searchElement();
                     break;
                 }
                 case "4" : {

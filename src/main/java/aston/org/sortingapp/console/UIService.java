@@ -12,7 +12,7 @@ public class UIService {
 
     private static final Scanner scan = new Scanner(System.in);
     private static int classOption;
-    private static AbstractInputMethod inputMethod;
+    private static AbstractInputMethod<?> inputMethod;
 
     static String[] menuOptions = {
             "1. Инициализация массива",
@@ -36,16 +36,19 @@ public class UIService {
             "1. Нормальная сортировка",
             "2. Сортировка по четным значениям",
     };
+    static String[] searchOptions = {
+            "1. Двоичный поиск"
+    };
 
     public static void initArray() {
         provideOptionsList("Выберите способ ввода", inputOptions);
-        int inputOption = getSelectedOption();
-        if (inputOption < 1 || inputOption > inputOptions.length) {
+        int inputOption = getSelectedOption(inputOptions.length);
+        if (inputOption <= 0) {
             return;
         }
         provideOptionsList("Выберите класс", classOptions);
-        classOption = getSelectedOption();
-        if (classOption < 1 || classOption > classOptions.length) {
+        classOption = getSelectedOption(classOptions.length);
+        if (classOption <= 0) {
             return;
         }
 
@@ -90,10 +93,14 @@ public class UIService {
         Arrays.stream(options).forEach(System.out::println);
     }
 
-    public static int getSelectedOption() {
+    public static int getSelectedOption(int max) {
         if (scan.hasNextInt()) {
-            return scan.nextInt();
+            int i = scan.nextInt();
+            if (i <= max && i > 0) {
+                return i;
+            }
         }
+        System.out.println("Указанная опция отсутствует");
         return -1;
     }
 
@@ -115,48 +122,63 @@ public class UIService {
         if (array == null) {
             return;
         }
-        for (
-                int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length; i++) {
             System.out.println("Объект " + i + ": " + array[i]);
         }
     }
 
-    public static void binarySearch() {
+    public static void searchElement() {
         var array = getArrayOrNull();
         if (array == null) {
             return;
         }
+        provideOptionsList("Выберите тип сортировки:", searchOptions);
+        int searchOption = getSelectedOption(searchOptions.length);
+        if (searchOption < 0) {
+            return;
+        }
         System.out.println("Введиите данные для поиска");
-        Object obj = switch (classOption) {
+        var obj = switch (classOption) {
             case 1 -> new EntityInputController<Animal>().createEntity(Animal.class, new InputManually<>(Animal.class));
             case 2 -> new EntityInputController<Barrel>().createEntity(Barrel.class, new InputManually<>(Barrel.class));
             case 3 -> new EntityInputController<Human>().createEntity(Human.class, new InputManually<>(Human.class));
             default -> null;
         };
-        if (array[0].getClass().isInstance(obj)) {
-            int index = BinarySearch.search(array, obj);
-            if (index >= 0) {
-                System.out.println("Индекс найденного элемента: " + index);
-            } else {
-                System.out.println("Элемент не найден");
-            }
+        SearchStrategy strategy = switch(searchOption) {
+            case 1 -> new BinarySearch<>();
+            default -> null;
+        };
+        int index = strategy.search((Comparable[])array, obj);
+        if (index >= 0) {
+            System.out.println("Индекс найденного элемента: " + index);
+        } else {
+            System.out.println("Элемент не найден");
+        }
+    }
+
+    private static TimSortEven.NumericFieldAccessor<?> createAccessor() {
+        switch (classOption) {
+            case 1 : return animal -> ((Animal)animal).getSpecies().length();
+            case 2 : return barrel -> ((Barrel)barrel).getVolume();
+            case 3 : return human -> ((Human)human).getAge();
+            case 4 : return animal -> ((Animal)animal).hashCode();
+            default : return null;
         }
     }
 
     public static void arraySort() {
         provideOptionsList("Выберите тип сортировки:", sortOptions);
-        int sortOption = getSelectedOption();
-        if (sortOption < 1 || sortOption > sortOptions.length) {
-            return;
-        }
-        SortStrategy<Object> strategy = switch(sortOption) {
-            case 1 -> new TimSort<>();
-            case 2 -> new TimSortEven<>();
-            default -> null;
-        };
-        var array = getArrayOrNull();
-        if (array != null && array.length > 0 && strategy != null) {
-            strategy.sort((Comparable[]) array);
+        int sortOption = getSelectedOption(sortOptions.length);
+        if (sortOption > 0) {
+            SortStrategy<?> strategy = switch (sortOption) {
+                case 1 -> new TimSort<>();
+                case 2 -> new TimSortEven<>(createAccessor());
+                default -> null;
+            };
+            var array = getArrayOrNull();
+            if (array != null && array.length > 0 && strategy != null) {
+                strategy.sort((Comparable[])array);
+            }
         }
     }
 
