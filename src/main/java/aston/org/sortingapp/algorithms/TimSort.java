@@ -20,6 +20,7 @@ public class TimSort <T> implements SortStrategy<T>{
         int currentIndexArr = 0;
         int startRun = currentIndexArr++;
         int lengtRun = 1;
+
         while(currentIndexArr < N){
             if(arr[currentIndexArr].compareTo((T)arr[currentIndexArr - 1]) > 0){
                 currentIndexArr++;
@@ -29,6 +30,26 @@ public class TimSort <T> implements SortStrategy<T>{
                     lengtRun = Math.min(minrun, lengtRun + (N - currentIndexArr - 1));
                 }
                 insertionSort(arr, startRun, startRun + lengtRun - 1, startRun);
+                if(stack.size() > 2){
+                    Range X = stack.pop();
+                    Range Y = stack.pop();
+                    Range Z = stack.pop();
+                    if((X.length > Y.length + Z.length) && (Y.length > Z.length)){
+                        stack.push(Z);
+                        stack.push(Y);
+                        stack.push(X);
+                    }else{
+                        if(X.length < Z.length){
+                            stack.push(Z);
+                            merge(arr, Y.start, Y.length, X.start, X.length);
+                            stack.push(new Range(Y.start, Y.length + X.length));
+                        }else{
+                            merge(arr, Z.start, Z.length, Y.start, Y.length);
+                            stack.push(new Range(Z.start, Z.length + Y.length));
+                            stack.push(X);
+                        }
+                    }
+                }
                 stack.push(new Range(startRun, lengtRun));
                 currentIndexArr = startRun + lengtRun;
                 startRun = currentIndexArr;
@@ -58,7 +79,6 @@ public class TimSort <T> implements SortStrategy<T>{
 
     private void insertionSort(Comparable<T>[] arr, int start, int end, int startSort) {
         for (int i = startSort; i <= end; ++i) {
-            System.out.println(i);
             T current = (T)arr[i];
             int j = i - 1;
             while ((j >= start) && (arr[j].compareTo(current) > 0)) {
@@ -89,7 +109,6 @@ public class TimSort <T> implements SortStrategy<T>{
         int j = secondStart;
         int k = firstStart;
         while (i < tempArr.length && j < secondStart + secondLength) {
-            System.out.println();
             if (tempArr[i].compareTo((T) arr[j]) < 0) {
                 arr[k++] = tempArr[i++];
             } else {
@@ -102,12 +121,28 @@ public class TimSort <T> implements SortStrategy<T>{
         while (j < secondStart + secondLength ){
             arr[k++] = arr[j++];
         }
-
     }
 
     static class Range {
-        int start;
-        int length;
+        
+        private int start;
+        private int length;
+
+        public int getStart() {
+            return start;
+        }
+
+        public int getLength() {
+            return length;
+        }
+
+        public void setStart(int start) {
+            this.start = start;
+        }
+
+        public void setLength(int length) {
+            this.length = length;
+        }
 
         @Override
         public String toString() {
