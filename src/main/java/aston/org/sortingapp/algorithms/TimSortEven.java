@@ -3,28 +3,32 @@ package aston.org.sortingapp.algorithms;
 public class TimSortEven<T> implements SortStrategy<T> {
     private final NumericFieldAccessor<T> fieldAccessor;
 
+    // Конструктор класса
     public TimSortEven(NumericFieldAccessor<T> fieldAccessor) {
         this.fieldAccessor = fieldAccessor;
     }
 
+    // Переопределение функции sort
     @Override
     public void sort(Comparable<T>[] arr) {
         sortEvenElements(arr);
     }
 
+    // Функция сортировки
     private void sortEvenElements(Comparable<T>[] arr) {
         int N = arr.length;
+        // Проверка на возможность сортировки
         if (N < 2) {
             return;
         }
 
-        // Получение индексов элементов с четными значениями полей
+        // Получение индексов элементов с четными значениями полей (работает в т.ч. для вещ.чисел)
         int[] indices = new int[N];
         int count = 0;
         for (int i = 0; i < N; i++) {
             double value = fieldAccessor.getNumericValue((T) arr[i]);
-            int integerPart = (int) value; 
-            double fractionalPart = value - integerPart; 
+            int integerPart = (int) value;
+            double fractionalPart = value - integerPart;
             if (fractionalPart == 0 && integerPart % 2 == 0) {
                 indices[count++] = i;
             }
