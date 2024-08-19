@@ -12,17 +12,7 @@ public class InputFromFile<T> extends AbstractInputMethod<T> {
 
     @Override
     public void createArray(EntityInputController<T> ic) {
-        String fileName;
-        if (entityType == Animal.class) {
-            fileName = "Animal.data";
-        } else if (entityType == Barrel.class) {
-            fileName = "Barrel.data";
-        } else if (entityType == Human.class) {
-            fileName = "Human.data";
-        } else {
-            fileName = "Other.data";
-        }
-
+        String fileName = this.entityType.getSimpleName() + ".data";
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             array = (T[]) in.readObject();
         } catch (FileNotFoundException e) {
