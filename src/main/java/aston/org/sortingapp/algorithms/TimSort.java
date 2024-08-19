@@ -30,7 +30,7 @@ public class TimSort <T> implements SortStrategy<T>{
                     lengtRun = Math.min(minrun, lengtRun + (N - currentIndexArr - 1));
                 }
                 insertionSort(arr, startRun, startRun + lengtRun - 1, startRun);
-                if(stack.size() > 2){
+                while(stack.size() > 2){
                     Range X = stack.pop();
                     Range Y = stack.pop();
                     Range Z = stack.pop();
@@ -38,6 +38,7 @@ public class TimSort <T> implements SortStrategy<T>{
                         stack.push(Z);
                         stack.push(Y);
                         stack.push(X);
+                        break;
                     }else{
                         if(X.length < Z.length){
                             stack.push(Z);
