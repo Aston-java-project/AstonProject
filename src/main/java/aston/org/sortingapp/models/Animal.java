@@ -3,13 +3,11 @@ package aston.org.sortingapp.models;
 import java.io.Serializable;
 
 public class Animal implements Comparable<Animal>, Serializable {
-    /*Имплементирует интерфейс Comparable или Comparator.
-    Также должен реализовывать паттерн Builder
-     */
+
     private static final long serialVersionUID = 1L;
     private final String species;
     private final String eyeColor;
-    private final boolean fur;
+    private final Boolean fur;
 
     private Animal(Builder builder) {
         this.species = builder.species;
@@ -31,7 +29,15 @@ public class Animal implements Comparable<Animal>, Serializable {
 
     @Override
     public int compareTo(Animal other) {
-        return this.species.compareTo(other.species);
+        int speciesComparison = this.species.compareTo(other.species);
+        if (speciesComparison != 0) {
+            return speciesComparison;
+        }
+        int eyeColorComparison = this.eyeColor.compareTo(other.eyeColor);
+        if (eyeColorComparison != 0) {
+            return eyeColorComparison;
+        }
+        return this.fur.compareTo(other.fur);
     }
 
     public static class Builder {
