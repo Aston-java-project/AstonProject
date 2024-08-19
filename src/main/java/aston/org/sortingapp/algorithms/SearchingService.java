@@ -12,4 +12,8 @@ public class SearchingService<T extends Comparable<T>> {
     public int search(List<T> list, T key) {
         return searchStrategy.search(list, key);
     }
+
+    public int search(T[] array, T key) {
+        return searchStrategy.search(array, key);
+    }
 }
